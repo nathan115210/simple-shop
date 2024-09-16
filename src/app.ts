@@ -1,6 +1,5 @@
 import bodyParser from 'body-parser';
 import express from 'express';
-import { engine } from 'express-handlebars';
 import path from 'path';
 import errorHandler from './controllers/error';
 import adminRoute from './routes/admin';
@@ -11,15 +10,15 @@ const app = express();
 let port = 3000;
 
 // set global settings
-app.engine(
-  'hbs',
-  engine({
-    layoutsDir: 'src/views/layouts/',
-    defaultLayout: 'main-layout',
-    extname: 'hbs',
-  }),
-);
-app.set('view engine', 'hbs');
+// app.engine(
+//   'hbs',
+//   engine({
+//     layoutsDir: 'src/views/layouts/',
+//     defaultLayout: 'main-layout',
+//     extname: 'hbs',
+//   }),
+// );
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(bodyParser.urlencoded({ extended: false }));

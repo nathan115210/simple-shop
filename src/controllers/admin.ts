@@ -1,15 +1,8 @@
 import { Request, Response } from 'express';
 import Product from '../models/product';
-import deleteProductFromFile from '../util/deleteProductFromFile';
+import { randomInt } from '../util/randomInt';
 
 const getAddProduct = async (req: Request, res: Response) => {
-  // res.sendFile(path.join(rootDir, 'views', 'add-product.html'));
-  // render the add-product.pug file
-  // res.render('add-product', {
-  //   pageTitle: 'Add Product',
-  //   path: '/admin/add-product',
-  // });
-
   res.render('admin/add-product', {
     // Use type assertion to treat 'res' as 'any' to access the 'render' method
     pageTitle: 'Add Product',
@@ -19,25 +12,26 @@ const getAddProduct = async (req: Request, res: Response) => {
     activeAddProduct: true,
   });
 };
-
+const defaultImageUrl =
+  'https://media.istockphoto.com/id/173015527/fi/valokuva/yksi-punainen-kirja-valkoisella-pinnalla.jpg?s=612x612&w=0&k=20&c=fkhS7Jtv8DUpkORmUf4PWMdFr9j4Ot8GsJH7Bf7vyrY=';
 const postAddProduct = async (req: Request, res: Response) => {
   const product = new Product(
     req.body.title,
     req.body.price,
     req.body.description,
-    Math.random().toString(),
+    randomInt.toString(),
+    req.body.imageUrl || defaultImageUrl,
   );
   product.saveProduct();
   res.redirect('/');
 };
 
-const getProducts = async (req: Request, res: Response) => {
-  deleteProductFromFile('211');
+const getAdminProducts = async (req: Request, res: Response) => {
   Product.fetchAllProducts(products => {
-    res.render('shop/product-list', {
+    res.render('admin/products', {
       products,
-      pageTitle: 'My Shop',
-      path: '/',
+      pageTitle: 'Shop | Admin products',
+      path: '/admin/products',
       hasProducts: products.length > 0,
       activeShop: true,
       productCSS: true,
@@ -45,4 +39,8 @@ const getProducts = async (req: Request, res: Response) => {
   });
 };
 
-export default { getAddProduct, postAddProduct, getProducts };
+export default {
+  getAddProduct,
+  postAddProduct,
+  getAdminProducts,
+};

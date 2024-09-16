@@ -1,8 +1,6 @@
 import fs from 'fs';
-import {
-  getProductsFromFile,
-  productsDataPath,
-} from '../util/getProductsFromFile';
+import { productsDataPath } from '../util/getDataFromPath';
+import { getProductsFromFile } from '../util/getProductsFromFile';
 import type { ProductProps } from '../util/types';
 
 class Product {
@@ -11,26 +9,32 @@ class Product {
     public price: ProductProps['price'],
     public description: ProductProps['description'],
     public id: ProductProps['id'],
+    public imageUrl: ProductProps['imageUrl'],
   ) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.id = id;
+    this.imageUrl = imageUrl;
   }
 
   saveProduct() {
-    getProductsFromFile(products => {
+    getProductsFromFile('productsData.json', products => {
       products.push(this);
-      fs.writeFile(productsDataPath, JSON.stringify(products), err => {
-        console.log(err);
-      });
+      fs.writeFile(
+        productsDataPath('productsData.json'),
+        JSON.stringify(products),
+        err => {
+          console.log(err);
+        },
+      );
     });
   }
   deletedProduct() {}
 
   // static makes the method accessible without instantiating the class
   static fetchAllProducts(callback: (products: ProductProps[]) => void) {
-    getProductsFromFile(callback);
+    getProductsFromFile('productsData.json', callback);
   }
 }
 
