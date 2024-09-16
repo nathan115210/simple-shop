@@ -1,3 +1,3 @@
-/data/cartData.json
-/data/checkoutData.json
+/src/data/cartData.json
+/src/data/checkoutData.json
 /node_modules
