@@ -17,16 +17,6 @@ const getCartProductsFromFile = (
   });
 };
 class Cart {
-  constructor(
-    public id: CartItemProps['id'],
-    public qty: CartItemProps['qty'],
-    public productInfo: CartItemProps['productInfo'],
-  ) {
-    this.id = id;
-    this.qty = qty;
-    this.productInfo = productInfo;
-  }
-
   static fetchCart(callback: (data: CartProps) => void) {
     getCartProductsFromFile('cartData.json', callback);
   }

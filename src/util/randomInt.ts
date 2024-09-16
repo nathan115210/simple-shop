@@ -1,1 +1,3 @@
-export const randomInt = Math.floor(Math.random() * 10);
+import { v4 as uuidv4 } from 'uuid';
+
+export const randomInt = uuidv4();

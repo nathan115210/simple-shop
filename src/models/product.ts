@@ -20,17 +20,38 @@ class Product {
 
   saveProduct() {
     getProductsFromFile('productsData.json', products => {
-      products.push(this);
-      fs.writeFile(
-        productsDataPath('productsData.json'),
-        JSON.stringify(products),
-        err => {
-          console.log(err);
-        },
-      );
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          products => products.id === this.id,
+        );
+        const updatedProducts = [...products];
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(
+          productsDataPath('productsData.json'),
+          JSON.stringify(updatedProducts),
+          err => {
+            console.log(err);
+          },
+        );
+      } else {
+        products.push(this);
+        fs.writeFile(
+          productsDataPath('productsData.json'),
+          JSON.stringify(products),
+          err => {
+            console.log(err);
+          },
+        );
+      }
     });
   }
-  deletedProduct() {}
+  // deletedProduct() {}
+  static findById(id: string, callback: (product: ProductProps) => void) {
+    getProductsFromFile('productsData.json', products => {
+      const product = products.find(p => p.id === id);
+      if (product) callback(product);
+    });
+  }
 
   // static makes the method accessible without instantiating the class
   static fetchAllProducts(callback: (products: ProductProps[]) => void) {

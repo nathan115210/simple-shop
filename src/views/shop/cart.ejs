@@ -1,6 +1,40 @@
 <%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
     </head>
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <%- include('../includes/end.ejs') %>
+
+            <main>
+                <% if (cartItems.length > 0) { %>
+                    <div class="grid">
+                        <% for (let cartItem of cartItems) { %>
+                            <article class="card product-item">
+                                <header class="card__header">
+                                    <h1 class="product__title">
+                                        <%= cartItem.productInfo.title %>
+                                    </h1>
+                                </header>
+                                <div class="card__image">
+                                    <img src="<%= cartItem.productInfo.imageUrl %>" alt="<%= cartItem.productInfo.title %>">
+                                </div>
+                                <div class="card__content">
+                                    <p class="product__description"></p>
+                                        Quantity: <%= cartItem.qty %>
+                                    </p>
+                                    <p class="product__description"></p>
+                                        Price: $<%= cartItem.productInfo.price %> X <%= cartItem.qty %>
+                                    </p>
+                                </div>
+                                <div class="card__actions">
+                                    <button class="btn">Remove from Cart</button>
+                                </div>
+                            </article>
+                            <% } %>
+                            <h3>Total price: <%= totalPrice %></h3>
+                    </div>
+                    <% } else { %>
+                        <h1>No Products Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

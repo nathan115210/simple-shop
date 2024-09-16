@@ -50,10 +50,14 @@ const getShopIndexPage = async (req: Request, res: Response) => {
 };
 
 const getCartPage = async (req: Request, res: Response) => {
-  Cart.fetchCart(cart => {
-    console.log('cart info', cart);
+  Cart.fetchCart(cartData => {
+    res.render('shop/cart', {
+      pageTitle: 'Shop | Cart',
+      path: '/cart',
+      cartItems: cartData.cartItems,
+      totalPrice: cartData.totalPrice,
+    });
   });
-  res.render('shop/cart', { pageTitle: 'Shop | Cart', path: '/cart' });
 };
 
 const postCartPage = async (req: Request, res: Response) => {
