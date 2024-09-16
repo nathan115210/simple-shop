@@ -20,6 +20,8 @@ class Product {
 
   saveProduct() {
     getProductsFromFile('productsData.json', products => {
+      //Update the product is the product ID exists
+      //TODO: update cartItem if product is updated
       if (this.id) {
         const existingProductIndex = products.findIndex(
           products => products.id === this.id,
@@ -34,6 +36,8 @@ class Product {
           },
         );
       } else {
+        // Add new product into the DB
+        this.id = Math.random().toString();
         products.push(this);
         fs.writeFile(
           productsDataPath('productsData.json'),

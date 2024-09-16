@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import Product from '../models/product';
-import { randomInt } from '../util/randomInt';
 
 const getAddProduct = async (req: Request, res: Response) => {
   res.render('admin/edit-product', {
@@ -17,7 +16,7 @@ const postAddProduct = async (req: Request, res: Response) => {
     req.body.title,
     req.body.price,
     req.body.description,
-    randomInt.toString(),
+    undefined,
     req.body.imageUrl || defaultImageUrl,
   );
   product.saveProduct();
@@ -57,7 +56,6 @@ const getEditProduct = (req: Request, res: Response) => {
 
 const postEditProduct = (req: Request, res: Response) => {
   const productId = req.body.productId;
-  console.log('productId', productId);
   const updatedProduct = new Product(
     req.body.title,
     req.body.price,

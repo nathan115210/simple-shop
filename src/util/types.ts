@@ -1,5 +1,5 @@
 export interface ProductProps {
-  id: string;
+  id?: string;
   title: string;
   price?: string;
   description?: string;
@@ -7,7 +7,7 @@ export interface ProductProps {
 }
 
 export interface CartItemProps {
-  id:string;
+  id: string;
   qty: number;
   productInfo: ProductProps;
 }
