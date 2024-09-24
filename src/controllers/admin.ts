@@ -63,7 +63,15 @@ const postEditProduct = (req: Request, res: Response) => {
     productId,
     req.body.imageUrl,
   );
+  // add callback, only do redirect after save product is done
   updatedProduct.saveProduct();
+  res.redirect('/admin/products');
+};
+
+const postDeleteProduct = (req: Request, res: Response) => {
+  const productId = req.body.productId;
+  Product.deleteById(productId);
+  // add callback, only do redirect after delete product is done
   res.redirect('/admin/products');
 };
 
@@ -73,4 +81,5 @@ export default {
   getAdminProducts,
   getEditProduct,
   postEditProduct,
+  postDeleteProduct,
 };

@@ -79,6 +79,34 @@ class Cart {
       });
     });
   }
+
+  static deleteProduct(id: string, productPrice: number) {
+    fs.readFile(productsDataPath('cartData.json'), (err, fileContent) => {
+      if (err) {
+        return;
+      }
+      const cartData: CartProps = JSON.parse(fileContent.toString());
+      const updatedCart = { ...cartData };
+      const product = updatedCart.cartItems?.find(
+        product => product.productInfo.id === id,
+      );
+      if (!product || !product.productInfo.price) {
+        return;
+      }
+
+      updatedCart.totalPrice -= productPrice * product.qty;
+      updatedCart.cartItems = updatedCart.cartItems?.filter(
+        product => product.productInfo.id !== id,
+      );
+      fs.writeFile(
+        productsDataPath('cartData.json'),
+        JSON.stringify(updatedCart),
+        err => {
+          console.log('err', err);
+        },
+      );
+    });
+  }
 }
 
 export default Cart;

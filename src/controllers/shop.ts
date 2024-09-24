@@ -4,7 +4,6 @@ import Product from '../models/product';
 import { ProductProps } from '../util/types';
 
 const getProducts = async (req: Request, res: Response) => {
-  // deleteProductFromFile('211');
   Product.fetchAllProducts(products => {
     res.render('shop/product-list', {
       products,
@@ -51,11 +50,23 @@ const getShopIndexPage = async (req: Request, res: Response) => {
 
 const getCartPage = async (req: Request, res: Response) => {
   Cart.fetchCart(cartData => {
-    res.render('shop/cart', {
-      pageTitle: 'Shop | Cart',
-      path: '/cart',
-      cartItems: cartData.cartItems,
-      totalPrice: cartData.totalPrice,
+    Product.fetchAllProducts(products => {
+      const cartProducts = [];
+      for (const product of products) {
+        const cartProductData = cartData.cartItems.find(
+          item => item.productInfo.id === product.id,
+        );
+        if (cartProductData) {
+          cartProducts.push({ productInfo: product, qty: cartProductData.qty });
+        }
+      }
+      res.render('shop/cart', {
+        pageTitle: 'Shop | Cart',
+        path: '/cart',
+        // cartItems: cartData.cartItems,
+        cartItems: cartProducts,
+        totalPrice: cartData.totalPrice,
+      });
     });
   });
 };
@@ -99,6 +110,15 @@ const getCheckoutPage = async (req: Request, res: Response) => {
     });
   });
 };
+const postCartDeleteProduct = async (req: Request, res: Response) => {
+  const productId = req.body.productId;
+  Product.findById(productId, product => {
+    if (product.price) {
+      Cart.deleteProduct(productId, +product.price);
+    }
+    res.redirect('/cart');
+  });
+};
 
 export default {
   getProducts,
@@ -108,4 +128,5 @@ export default {
   postCartPage,
   getCheckoutPage,
   getOrdersPage,
+  postCartDeleteProduct,
 };

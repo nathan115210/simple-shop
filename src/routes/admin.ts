@@ -8,6 +8,7 @@ const {
   getAdminProducts,
   getEditProduct,
   postEditProduct,
+  postDeleteProduct,
 } = adminController;
 
 // /admin/add-product => GET
@@ -24,5 +25,8 @@ router.get('/edit-product/:productId', getEditProduct);
 
 // /admin/edit-product => POST
 router.post('/edit-product', postEditProduct);
+
+// /admin/delete-product => POST
+router.post('/delete-product', postDeleteProduct);
 
 export default router;

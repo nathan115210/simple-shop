@@ -2,6 +2,7 @@ import fs from 'fs';
 import { productsDataPath } from '../util/getDataFromPath';
 import { getProductsFromFile } from '../util/getProductsFromFile';
 import type { ProductProps } from '../util/types';
+import Cart from './cart';
 
 class Product {
   constructor(
@@ -32,7 +33,7 @@ class Product {
           productsDataPath('productsData.json'),
           JSON.stringify(updatedProducts),
           err => {
-            console.log(err);
+            console.error(err);
           },
         );
       } else {
@@ -43,17 +44,39 @@ class Product {
           productsDataPath('productsData.json'),
           JSON.stringify(products),
           err => {
-            console.log(err);
+            console.error(err);
           },
         );
       }
     });
   }
-  // deletedProduct() {}
+
+  static deleteById(id: string) {
+    getProductsFromFile('productsData.json', products => {
+      const product: ProductProps | undefined = products.find(
+        product => product.id === id,
+      );
+      const updatedProducts = products.filter(product => product.id !== id);
+      fs.writeFile(
+        productsDataPath('productsData.json'),
+        JSON.stringify(updatedProducts),
+        err => {
+          if (!err && product?.price) {
+            Cart.deleteProduct(id, +product.price);
+          }
+        },
+      );
+    });
+  }
+
   static findById(id: string, callback: (product: ProductProps) => void) {
     getProductsFromFile('productsData.json', products => {
       const product = products.find(p => p.id === id);
-      if (product) callback(product);
+      if (product) {
+        callback(product);
+      } else {
+        console.error('Product not found');
+      }
     });
   }
 
