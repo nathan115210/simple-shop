@@ -49,6 +49,26 @@ To get started with the project, follow these steps:
 
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/your-username/simple-shop.git
+   git clone git@github.com:nathan115210/simple-shop.git
    cd simple-shop# simple-shop
    ```
+2. **Install dependencies**:
+
+   ```sh
+   npm install
+   ```
+
+3. **Set up the database**:
+
+- Ensure MySQL is running on your machine.
+- Create a database named node-app.
+- Update the database credentials in src/util/db.ts.
+
+4. **Run the application:**:
+
+   ```sh
+   npm run dev
+   ```
+
+5. **Access the application: Open your browser and navigate to**:
+   `http://localhost:3000`
