@@ -1,89 +1,78 @@
-import fs from 'fs';
-import { productsDataPath } from '../util/getDataFromPath';
-import { getProductsFromFile } from '../util/getProductsFromFile';
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from 'sequelize';
+import sequelize from '../util/db';
 import type { ProductProps } from '../util/types';
-import Cart from './cart';
+import CartItem from './cartItem';
+import OrderItem from './orderItem';
+import User from './user';
 
-class Product {
-  constructor(
-    public title: ProductProps['title'],
-    public price: ProductProps['price'],
-    public description: ProductProps['description'],
-    public id: ProductProps['id'],
-    public imageUrl: ProductProps['imageUrl'],
-  ) {
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.id = id;
-    this.imageUrl = imageUrl;
-  }
-
-  saveProduct() {
-    getProductsFromFile('productsData.json', products => {
-      //Update the product is the product ID exists
-      //TODO: update cartItem if product is updated
-      if (this.id) {
-        const existingProductIndex = products.findIndex(
-          products => products.id === this.id,
-        );
-        const updatedProducts = [...products];
-        updatedProducts[existingProductIndex] = this;
-        fs.writeFile(
-          productsDataPath('productsData.json'),
-          JSON.stringify(updatedProducts),
-          err => {
-            console.error(err);
-          },
-        );
-      } else {
-        // Add new product into the DB
-        this.id = Math.random().toString();
-        products.push(this);
-        fs.writeFile(
-          productsDataPath('productsData.json'),
-          JSON.stringify(products),
-          err => {
-            console.error(err);
-          },
-        );
-      }
-    });
-  }
-
-  static deleteById(id: string) {
-    getProductsFromFile('productsData.json', products => {
-      const product: ProductProps | undefined = products.find(
-        product => product.id === id,
-      );
-      const updatedProducts = products.filter(product => product.id !== id);
-      fs.writeFile(
-        productsDataPath('productsData.json'),
-        JSON.stringify(updatedProducts),
-        err => {
-          if (!err && product?.price) {
-            Cart.deleteProduct(id, +product.price);
-          }
-        },
-      );
-    });
-  }
-
-  static findById(id: string, callback: (product: ProductProps) => void) {
-    getProductsFromFile('productsData.json', products => {
-      const product = products.find(p => p.id === id);
-      if (product) {
-        callback(product);
-      } else {
-        console.error('Product not found');
-      }
-    });
-  }
-
-  // static makes the method accessible without instantiating the class
-  static fetchAllProducts(callback: (products: ProductProps[]) => void) {
-    getProductsFromFile('productsData.json', callback);
-  }
+interface ProductModel
+  extends Model<
+    InferAttributes<ProductModel>,
+    InferCreationAttributes<ProductModel>
+  > {
+  id: ProductProps['id'];
+  title: ProductProps['title'];
+  price: ProductProps['price'];
+  description: ProductProps['description'];
+  imageUrl: ProductProps['imageUrl'];
+  userId: User['id'];
 }
+
+class Product
+  extends Model<
+    InferAttributes<ProductModel>,
+    InferCreationAttributes<ProductModel>
+  >
+  implements ProductModel
+{
+  public id!: ProductProps['id'];
+  public title!: ProductProps['title'];
+  public price!: ProductProps['price'];
+  public description!: ProductProps['description'];
+  public imageUrl!: ProductProps['imageUrl'];
+  public userId!: number;
+
+  // Add the cartItem and orderItem properties to the Product model
+  public CartItem!: CartItem;
+  public OrderItem!: OrderItem;
+  
+}
+
+Product.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.STRING,
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      defaultValue:
+        'https://media.istockphoto.com/id/173015527/fi/valokuva/yksi-punainen-kirja-valkoisella-pinnalla.jpg?s=1024x1024&w=is&k=20&c=WtyN8_Bpc3xXXxbPG6JBG5p42yrsBUMwvlhkifL984U=',
+    },
+    userId: DataTypes.INTEGER,
+  },
+  {
+    sequelize,
+    modelName: 'Product',
+  },
+);
 
 export default Product;
