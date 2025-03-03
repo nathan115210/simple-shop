@@ -13,7 +13,7 @@ const UserDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/users/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/users/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('User not found');
         return res.json();
