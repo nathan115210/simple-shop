@@ -12,6 +12,7 @@ import adminRoute from './routes/admin';
 import shopRoutes from './routes/shop';
 import sequelize from './util/db';
 import rootDir from './util/path';
+import authRoute from './routes/auth';
 import { CustomUserRequest } from './util/types';
 
 const app = express();
@@ -43,6 +44,8 @@ app.use((req: CustomUserRequest, _res: Response, next: NextFunction) => {
 app.use('/admin', adminRoute);
 
 app.use(shopRoutes);
+
+app.use(authRoute);
 
 //404 page
 app.use(errorHandler);

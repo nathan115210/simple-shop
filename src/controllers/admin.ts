@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import Product from '../models/product';
 import { CustomUserRequest, ProductProps } from '../util/types';
 
-const getAddProduct = async (req: Request, res: Response) => {
+const getAddProduct = async (req: CustomUserRequest, res: Response) => {
   res.render('admin/edit-product', {
     // Use type assertion to treat 'res' as 'any' to access the 'render' method
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    isAuthenticated: !!req.isLoggedIn,
   });
 };
 const defaultImageUrl =
@@ -52,6 +53,7 @@ const getAdminProducts = async (req: CustomUserRequest, res: Response) => {
         products,
         pageTitle: 'Shop | Admin products',
         path: '/admin/products',
+        isAuthenticated: !!req.isLoggedIn,
       });
     } catch (err) {
       console.error('postAddProduct error:', err);
@@ -77,12 +79,12 @@ const getEditProduct = async (req: CustomUserRequest, res: Response) => {
       if (!product) {
         return res.redirect('/');
       } else {
-        console.log('product:', product);
         res.render('admin/edit-product', {
           pageTitle: 'Edit Product',
           path: '/admin/edit-product',
           editing: isEditMode,
           product,
+          isAuthenticated: !!req.isLoggedIn,
         });
       }
     } catch (error) {
@@ -145,20 +147,20 @@ const postDeleteProduct = (req: Request, res: Response) => {
     })
     .catch((err: unknown) => console.error('postDeleteProduct() error:', err));
   /**
-     * use findByPk method, then call destroy method
-     * 
-     *
-      Product.findByPk(productId)
-      .then((product: Product | null) => {
-        return product?.destroy();
-      })
-      .then(() => {
-        res.redirect('/admin/products');
-      })
-      .catch((err: unknown) => console.error('postDeleteProduct() error:', err));
-      *
-      *
-     */
+   * use findByPk method, then call destroy method
+   *
+   *
+   Product.findByPk(productId)
+   .then((product: Product | null) => {
+   return product?.destroy();
+   })
+   .then(() => {
+   res.redirect('/admin/products');
+   })
+   .catch((err: unknown) => console.error('postDeleteProduct() error:', err));
+   *
+   *
+   */
 };
 
 export default {

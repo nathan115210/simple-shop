@@ -6,7 +6,7 @@ import Product from '../models/product';
 import OrderItem from '../models/orderItem';
 import { CustomUserRequest, ProductProps } from '../util/types';
 
-const getProducts = async (_req: Request, res: Response) => {
+const getProducts = async (req: CustomUserRequest, res: Response) => {
   console.log('Loading products page - getProducts()');
   Product.findAll({ raw: true })
     .then((products: ProductProps[]) => {
@@ -17,12 +17,13 @@ const getProducts = async (_req: Request, res: Response) => {
         hasProducts: products.length > 0,
         activeShop: true,
         productCSS: true,
+        isAuthenticated: !!req.isLoggedIn,
       });
     })
     .catch((err: unknown) => console.error('getProducts error:', err));
 };
 
-const getProductById = async (req: Request, res: Response) => {
+const getProductById = async (req: CustomUserRequest, res: Response) => {
   const productId = req.params.productId; // /products/:productId
   Product.findByPk(productId).then((product: ProductProps | null) => {
     if (product) {
@@ -30,12 +31,13 @@ const getProductById = async (req: Request, res: Response) => {
         product,
         pageTitle: product.title,
         path: `/products`,
+        isAuthenticated: !!req.isLoggedIn,
       });
     }
   });
 };
 
-const getShopIndexPage = async (_req: Request, res: Response) => {
+const getShopIndexPage = async (req: CustomUserRequest, res: Response) => {
   console.log('Loading Shop page - getShopIndexPage()');
   Product.findAll({ raw: true })
     .then((products: ProductProps[]) => {
@@ -46,6 +48,7 @@ const getShopIndexPage = async (_req: Request, res: Response) => {
         hasProducts: products.length > 0,
         activeShop: true,
         productCSS: true,
+        isAuthenticated: !!req.isLoggedIn,
       });
     })
     .catch((err: unknown) => console.error('getShopIndexPage error:', err));
@@ -63,12 +66,12 @@ const getCartPage = async (req: CustomUserRequest, res: Response) => {
             return result + product.price * product.CartItem.qty;
           return result;
         }, 0);
-
         res.render('shop/cart', {
           pageTitle: 'Shop | Cart',
           path: '/cart',
           cartItems,
           totalPrice: totalPrice,
+          isAuthenticated: req.isLoggedIn,
         });
       }
     } catch (error) {
@@ -165,6 +168,8 @@ const postOrder = async (req: CustomUserRequest, res: Response) => {
 };
 
 const getOrdersPage = async (req: CustomUserRequest, res: Response) => {
+  console.log('get orders page - getOrdersPage()');
+
   if (!req.user) {
     res.redirect('/login');
   } else {
@@ -175,6 +180,7 @@ const getOrdersPage = async (req: CustomUserRequest, res: Response) => {
           path: '/orders',
           pageTitle: 'Your Orders',
           orders,
+          isAuthenticated: !!req.isLoggedIn,
         });
       })
       .catch((err: unknown) => {

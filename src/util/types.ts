@@ -25,6 +25,7 @@ export interface CartProps {
 // Extend the Request interface to include the user property
 export interface CustomUserRequest extends Request {
   user?: User;
+  isLoggedIn?: boolean;
 }
 
 declare module '../models/product' {
